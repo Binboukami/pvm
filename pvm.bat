@@ -7,7 +7,7 @@ set CONF_DEF_INSTALL_PATH=C:\pvm\
 @REM help commmand for general commands. todo: Add indepth descriptions for commands and subcommands
 set CONF_SUPPORTED_ARGS=-v --version --help use --install --uninstall
 
-SET _err_handlers="%~dp0lib/err_handlers.bat"
+SET _err_handlers="%~dp0%lib/err_handlers.bat"
 SET _install="%~dp0%install.bat"
 SET _uninstall="%~dp0%uninstall.bat"
 
