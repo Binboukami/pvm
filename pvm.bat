@@ -2,10 +2,11 @@
 
 set CONF_PKG_VER=1.0.0
 set CONF_DEF_INSTALL_PATH=C:\pvm\
+set DEFAULT_PHP_DIR=C:\php
 
 @REM if[%~1]==[list] ( rem list available php versions )
 @REM help commmand for general commands. todo: Add indepth descriptions for commands and subcommands
-set CONF_SUPPORTED_ARGS=-v --version --help use --install --uninstall
+set CONF_SUPPORTED_ARGS=-v --version list --help use --install --uninstall
 
 SET _err_handlers="%~dp0%lib/err_handlers.bat"
 SET _install="%~dp0%install.bat"
@@ -28,6 +29,7 @@ if not [%~1]==[] (goto :PARSE_ARGS) else (goto :ERR_INVALID_ARG)
   :SUB_PRC_VALID_PARSE_ARGS
     if [%~1]==[-v] CALL :PRC_PKG_VERSION
     if [%~1]==[--version] CALL :PRC_PKG_VERSION
+    if [%~1]==[list] CALL :PRC_AVAIL_PHP_VERSIONS
     if [%~1]==[use] (
 
       if [%~2]==[] (
@@ -56,21 +58,23 @@ EXIT /b 0
 EXIT /b 0
 
 :PRC_SET_PHP_VER rem VERSION_STRING
+  call :PRC_GET_CURRENT_VERSION _ current_version
+  goto :MODIFY_PATH_STRING current_version
 
+EXIT /b 0
+
+:PRC_GET_CURRENT_VERSION rem _ RETURN
   call php "-v" > temp.txt
-
-  set /a current_version=0
 
   setlocal enabledelayedexpansion
   for /F "tokens=2 delims= " %%a in ('type temp.txt') do (
 
     endlocal
-    set current_version=%%a
-    goto :MODIFY_PATH_STRING current_version
-  )
+    set %~2=%%a
 
+    EXIT /b 0
+  )
 EXIT /b 0
-goto :eof
 
 :MODIFY_PATH_STRING rem VERSION_NUMBER
   SET path_string=%PATH%
@@ -93,3 +97,25 @@ goto :eof
 exit /b 0
 
 goto :eof
+
+@REM Prints current available php version in the default php dir based on folder names
+:PRC_AVAIL_PHP_VERSIONS
+  call :PRC_GET_CURRENT_VERSION _ current_version
+
+  SETLOCAL EnableDelayedExpansion
+
+  for /f %%d in ('dir %DEFAULT_PHP_DIR% /b /A:D') do (
+
+    set sem_ver=%%d
+
+    @REM Parses out sem_ver string
+    call set sem_ver=%%sem_ver:php=%%
+
+    if /I "%current_version%" EQU "!sem_ver!" (
+        call set sem_ver=!sem_ver! * Current
+    )
+
+    echo !sem_ver!
+  )
+endlocal
+exit /b 0
