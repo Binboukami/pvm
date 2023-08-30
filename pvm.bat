@@ -1,5 +1,17 @@
 @echo off
 
+echo %PSModulePath% | findstr %USERPROFILE% >NUL
+if %ERRORLEVEL% equ 0 goto :IS_PWSH
+goto :IS_CMD
+
+:IS_PWSH
+@echo Sorry :(
+@echo Currently no powershell implementation is available
+@rem todo add powershell implementation
+goto :eof
+
+:IS_CMD
+
 set CONF_PKG_VER=1.0.0
 set CONF_DEF_INSTALL_PATH=C:\pvm\
 set DEFAULT_PHP_DIR=C:\php
