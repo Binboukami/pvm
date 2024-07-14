@@ -10,6 +10,7 @@ Until there is an automated installation process, it is highly recommend to set 
 ### Usage
 
 #### List PHP versions available in the search folder
+By default, searches for "phpx.x.x" subfolders on "C:/php"
 ```bash
 ~ pvm list
 ```
